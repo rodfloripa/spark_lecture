@@ -75,7 +75,9 @@ O **broadcast** envia tabelas pequenas para todos os nós, permitindo junções 
 | **Média** | 10 MB a 100 MB | Aumente para 50 MB ou 100 MB. |
 | **Grande** | > 100 MB | Geralmente não é transmitida automaticamente. |
 
-### 5. Ajuste o paralelismo e memória
+
+
+### 5. Monitore e ajuste do paralelismo e garbage collection (GC)
 Ajuste o `spark.default.parallelism` e a memória do executor para evitar falhas e lentidão no processamento.
 
 | Tamanho dos dados | spark.default.parallelism | spark.executor.memory |
@@ -85,10 +87,89 @@ Ajuste o `spark.default.parallelism` e a memória do executor para evitar falhas
 | **Grande** (1 GB a 10 GB) | 8-16 | 4-8 GB |
 | **Muito grande** (> 10 GB) | 16-32 | 8-16 GB |
 
+
+*Tamanho dos dados pequeno (< 100 MB)*
+
+- `spark.default.parallelism`: 2-4
+- `spark.sql.files.openCostInBytes`: 1-4 MB
+
+Exemplo:
+spark.conf.set("spark.default.parallelism", 2)
+
+spark.conf.set("spark.sql.files.openCostInBytes", 1 * 1024 * 1024) # 1 MB
+
+
+*Tamanho dos dados médio (100 MB a 1 GB)*
+
+- `spark.default.parallelism`: 4-8
+- `spark.sql.files.openCostInBytes`: 4-16 MB
+
+Exemplo:
+spark.conf.set("spark.default.parallelism", 4)
+
+spark.conf.set("spark.sql.files.openCostInBytes", 4 * 1024 * 1024) # 4 MB
+
+
+*Tamanho dos dados grande (1 GB a 10 GB)*
+
+- `spark.default.parallelism`: 8-16
+- `spark.sql.files.openCostInBytes`: 16-64 MB
+
+Exemplo:
+spark.conf.set("spark.default.parallelism", 8)
+
+spark.conf.set("spark.sql.files.openCostInBytes", 16 * 1024 * 1024) # 16 MB
+
+
+*Tamanho dos dados muito grande (> 10 GB)*
+
+- `spark.default.parallelism`: 16-32
+- `spark.sql.files.openCostInBytes`: 64-128 MB
+
+Exemplo:
+spark.conf.set("spark.default.parallelism", 16)
+
+spark.conf.set("spark.sql.files.openCostInBytes", 64 * 1024 * 1024) # 64 MB
+
+Lembre-se de que esses são apenas exemplos e que o ajuste desses parâmetros depende do seu ambiente de execução e do tamanho dos dados.
+
+*Regra geral*
+
+- `spark.default.parallelism`: 2-4 vezes o número de núcleos de CPU disponíveis.
+- `spark.sql.files.openCostInBytes`: 1-10% do tamanho do arquivo.
+
+
+
+Há várias configurações de memória RAM do executor que você pode ajustar no Spark:
+
+1. spark.executor.memory: define a memória RAM total disponível para cada executor
+2. spark.executor.memoryOverhead: define a memória adicional para o executor (por exemplo, para o sistema operacional e outros processos)
+3. spark.memory.fraction: define a fração de memória RAM usada para armazenamento de dados (padrão: 0,6)
+4. spark.memory.storageFraction: define a fração de memória RAM usada para armazenamento de dados em cache (padrão: 0,5)
+5. spark.executor.pyspark.memory: define a memória RAM disponível para o Python worker (somente para PySpark)
+6. spark.executor.pyspark.memoryOverhead: define a memória adicional para o Python worker (somente para PySpark)
+
+Exemplo:
+*  spark.conf.set("spark.executor.memory", "4g") - 4 GB de memória RAM
+*  spark.conf.set("spark.executor.memoryOverhead", "1g") - 1 GB de memória adicional
+*  spark.conf.set("spark.memory.fraction", 0.6) - 60% da memória RAM para armazenamento de dados
+*  spark.conf.set("spark.memory.storageFraction", 0.5) - 50% da memória RAM para armazenamento de dados em cache
+
+Lembre-se de que o ajuste dessas configurações depende do seu ambiente de execução e do tamanho dos dados.
+
+
+
 #### Configurações de RAM do Executor:
 * `spark.executor.memoryOverhead`: Memória para o SO e processos externos.
 * `spark.memory.fraction`: Fração da RAM para armazenamento (padrão 0.6).
 * `spark.memory.storageFraction`: Fração da RAM para cache (padrão 0.5).
+
+Monitoramento do GC
+
+    1. Acesse o Spark UI em `http://<driver-node>:4040`
+    2. Clique em "Executors"
+    3. Verifique a coluna "GC Time" para cada executor
+    4. Se o tempo de GC for alto (> 10%), ajuste a memória do executor
 
 ### 6. Use o Spark SQL
 O Spark SQL (DataFrames e Datasets) é mais eficiente que a RDD API devido ao otimizador Catalyst.
