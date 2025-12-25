@@ -22,6 +22,7 @@ Pequeno (< 100 MB)	32 MB a 64 MB	1 MB a 4 MB
 Médio (100 MB a 1 GB)	64 MB a 128 MB	4 MB a 16 MB
 Grande (1 GB a 10 GB)	128 MB a 256 MB	16 MB a 64 MB
 Muito grande (> 10 GB)	256 MB a 512 MB	64 MB a 128 MB
+
 - Regra geral:
     - O tamanho dos blocos deve ser entre 1/10 e 1/5 do tamanho do arquivo.
     - O custo de abertura de arquivo deve ser entre 1/100 e 1/50 do tamanho do bloco.
@@ -56,6 +57,7 @@ Pequeno (< 100 MB)	2-4	1-4 MB
 Médio (100 MB a 1 GB)	4-8	4-16 MB
 Grande (1 GB a 10 GB)	8-16	16-64 MB
 Muito grande (> 10 GB)	16-32	64-128 MB
+
 5. Monitore e ajuste o garbage collection (GC)
 - `spark.executor.memory`: ajuste a memória do executor para evitar GC excessivo.
 - Monitore o GC com ferramentas como o Spark UI ou o Ganglia.
@@ -66,6 +68,7 @@ Pequeno (< 100 MB)	1-2 GB
 Médio (100 MB a 1 GB)	2-4 GB
 Grande (1 GB a 10 GB)	4-8 GB
 Muito grande (> 10 GB)	8-16 GB
+
 *Configurações de memória RAM do executor*
 
 - `spark.executor.memory`: define a memória RAM total disponível para cada executor
@@ -74,10 +77,14 @@ Muito grande (> 10 GB)	8-16 GB
 - `spark.memory.storageFraction`: define a fração de memória RAM usada para armazenamento de dados em cache (padrão: 0,5)
 
 Exemplo:
-spark.conf.set("spark.executor.memory", "4g")  # 4 GB de memória RAM
-spark.conf.set("spark.executor.memoryOverhead", "1g")  # 1 GB de memória adicional
-spark.conf.set("spark.memory.fraction", 0.6)  # 60% da memória RAM para armazenamento de dados
+spark.conf.set("spark.executor.memory", "4g")  
+# 4 GB de memória RAM
+spark.conf.set("spark.executor.memoryOverhead", "1g")  
+# 1 GB de memória adicional
+spark.conf.set("spark.memory.fraction", 0.6)  
+# 60% da memória RAM para armazenamento de dados
 spark.conf.set("spark.memory.storageFraction", 0.5)  # 50% da memória RAM para armazenamento de dados em cache
+
 6. Use o Spark SQL
 - O Spark SQL é mais eficiente do que o RDD API para operações de dados estruturados.
 - Use `DataFrame` e `Dataset` para aproveitar as otimizações do Spark SQL.
