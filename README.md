@@ -19,9 +19,7 @@ E aqui mora o problema.
 "200" é um chute. É um número genérico que não faz ideia se você está processando 10MB ou 10TB.
 <p style="text-align: justify;">
     Cenário A: "Small Data" (Ex: 50MB)
-
     Você faz um groupBy. O Spark, obediente, cria 200 partições.
-
     Resultado: 195 partições vazias.
 </p>
 
@@ -43,7 +41,6 @@ Enquanto o spark.sql.shuffle.partitions controla os dados durante as trocas (joi
 
 <p style="text-align: justify;">
     Se você ler 10 GB de dados com maxPartitionBytes em 128 MB, terá inicialmente cerca de 80 partições.
-
     Se você não ajustar o shuffle, o Spark usará o padrão de 200, o que pode ser excessivo para esse volume, gerando tarefas vazias.
 </p>
 
