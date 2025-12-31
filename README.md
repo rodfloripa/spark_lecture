@@ -174,7 +174,7 @@ Monitoramento do GC
 ### 6. Use o Spark SQL
 O Spark SQL (DataFrames e Datasets) é mais eficiente que a RDD API devido ao otimizador Catalyst.
 
----
+
 Lembre-se de monitorar o desempenho do seu aplicativo Spark e ajustar as configurações conforme necessário! 😊
 
 ## Python
